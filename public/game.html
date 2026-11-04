@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>เล่นเกม · ผจญภัยกับพี่เสือ</title>
+  <link rel="icon" href="assets/tiger.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" onclick="return confirm('ออกจากเกม? คะแนนรอบนี้จะไม่ถูกบันทึก')"><img src="assets/tiger.svg" alt="">ผจญภัยกับพี่เสือ</a>
+    <span class="spacer"></span>
+    <span class="pill" id="who"></span>
+    <span class="pill orange" id="score">⭐ 0 คะแนน</span>
+  </header>
+  <main class="wrap" id="app" aria-live="polite"></main>
+  <script src="assets/common.js"></script>
+  <script src="assets/data.js"></script>
+  <script src="assets/game.js"></script>
+</body>
+</html>

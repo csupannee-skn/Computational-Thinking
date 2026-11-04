@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ผจญภัยแนวคิดเชิงคำนวณกับพี่เสือ</title>
+  <meta name="description" content="เกมฝึกทักษะแนวคิดเชิงคำนวณ 4 ด่าน: แยกย่อยปัญหา จดจำรูปแบบ คิดเชิงนามธรรม และออกแบบอัลกอริทึม">
+  <link rel="icon" href="assets/tiger.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html"><img src="assets/tiger.svg" alt="">ผจญภัยกับพี่เสือ</a>
+    <span class="spacer"></span>
+    <a class="pill" href="survey.html">📝 แบบประเมิน</a>
+    <a class="pill" href="dashboard.html">📊 สำหรับครู</a>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <span class="pill orange">🎮 เกมฝึกทักษะ Computational Thinking</span>
+        <h1 style="margin-top:12px">ผจญภัยแนวคิดเชิงคำนวณ<br>กับ “พี่เสือ” 🐯</h1>
+        <p>พี่เสือชวนน้อง ๆ มาฝึกคิดอย่างเป็นระบบผ่าน 4 ด่าน ตามองค์ประกอบของแนวคิดเชิงคำนวณ
+          ใช้เวลาประมาณ 10–15 นาที เล่นได้ทั้งบนคอมพิวเตอร์ แท็บเล็ต และมือถือ</p>
+        <div class="grid two">
+          <div class="pillar"><span class="ico">🧩</span><div><b>การแยกย่อยปัญหา</b><small>แบ่งปัญหาใหญ่เป็นส่วนย่อย</small></div></div>
+          <div class="pillar"><span class="ico">🔍</span><div><b>การจดจำรูปแบบ</b><small>หาความเหมือนที่ซ่อนอยู่</small></div></div>
+          <div class="pillar"><span class="ico">🎯</span><div><b>การคิดเชิงนามธรรม</b><small>เลือกเฉพาะสิ่งที่สำคัญ</small></div></div>
+          <div class="pillar"><span class="ico">🧭</span><div><b>การออกแบบอัลกอริทึม</b><small>เขียนขั้นตอนพาพี่เสือไปกินเนื้อ</small></div></div>
+        </div>
+      </div>
+      <img class="big" src="assets/tiger.svg" alt="พี่เสือ มาสคอตของเกม">
+    </section>
+
+    <section class="card" style="max-width:620px;margin:0 auto">
+      <div class="mascot" style="margin-bottom:12px">
+        <img src="assets/tiger.svg" alt="" style="width:90px">
+        <div class="bubble">สวัสดีจ้า! บอกพี่เสือหน่อยว่าน้องชื่ออะไร อยู่ห้องไหน 😊</div>
+      </div>
+      <form id="startForm" novalidate>
+        <label class="field"><span>ชื่อ–นามสกุล *</span>
+          <input type="text" id="name" maxlength="80" autocomplete="name" required placeholder="เช่น ด.ช.ใจดี รักเรียน">
+        </label>
+        <div class="form-row">
+          <label class="field"><span>ชั้น/ห้อง</span>
+            <input type="text" id="classRoom" maxlength="30" list="classList" placeholder="เช่น ม.5/1">
+            <datalist id="classList"></datalist>
+          </label>
+          <label class="field"><span>เลขที่</span>
+            <input type="text" id="studentNo" maxlength="10" inputmode="numeric" placeholder="เช่น 12">
+          </label>
+        </div>
+        <div id="err" class="alert hidden" role="alert"></div>
+        <div class="actions"><button class="btn orange" type="submit">เริ่มผจญภัย 🚀</button></div>
+      </form>
+    </section>
+
+    <p class="footer-links">ผลการเล่นและแบบประเมินจะถูกบันทึกเพื่อใช้ในการพัฒนาการเรียนการสอน</p>
+  </main>
+
+  <script src="assets/common.js"></script>
+  <script>
+    (function () {
+      const dl = document.getElementById("classList");
+      for (let m = 1; m <= 6; m++) for (let r = 1; r <= 12; r++) dl.insertAdjacentHTML("beforeend", `<option value="ม.${m}/${r}">`);
+      const p = CT.getPlayer();
+      if (p) {
+        document.getElementById("name").value = p.name || "";
+        document.getElementById("classRoom").value = p.classRoom || "";
+        document.getElementById("studentNo").value = p.studentNo || "";
+      }
+      document.getElementById("startForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("name").value.trim();
+        const err = document.getElementById("err");
+        if (name.length < 2) {
+          err.textContent = "กรุณากรอกชื่อ–นามสกุลก่อนเริ่มเล่นนะ";
+          err.classList.remove("hidden");
+          document.getElementById("name").focus();
+          return;
+        }
+        CT.setPlayer({
+          name,
+          classRoom: document.getElementById("classRoom").value.trim(),
+          studentNo: document.getElementById("studentNo").value.trim(),
+        });
+        location.href = "game.html";
+      });
+    })();
+  </script>
+</body>
+</html>

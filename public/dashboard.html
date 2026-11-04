@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>แดชบอร์ดครู · ผจญภัยกับพี่เสือ</title>
+  <link rel="icon" href="assets/tiger.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html"><img src="assets/tiger.svg" alt="">ผจญภัยกับพี่เสือ</a>
+    <span class="pill orange">📊 แดชบอร์ดครู</span>
+    <span class="spacer"></span>
+    <button class="btn ghost small hidden" id="logout">ออกจากระบบ</button>
+  </header>
+
+  <main class="wrap wide">
+    <!-- เข้าสู่ระบบ -->
+    <section id="loginView" class="card" style="max-width:460px;margin:30px auto">
+      <div class="mascot" style="margin-bottom:10px">
+        <img src="assets/tiger.svg" alt="" style="width:80px">
+        <div class="bubble">หน้านี้สำหรับคุณครูเท่านั้นนะ 🔐</div>
+      </div>
+      <form id="loginForm">
+        <label class="field"><span>รหัสผ่านผู้ดูแล (ADMIN_KEY)</span>
+          <input type="password" id="key" autocomplete="current-password" required>
+        </label>
+        <div id="loginErr" class="alert hidden" role="alert"></div>
+        <div class="actions"><button class="btn" type="submit">เข้าสู่แดชบอร์ด</button></div>
+      </form>
+    </section>
+
+    <!-- แดชบอร์ด -->
+    <section id="dashView" class="hidden">
+      <div class="toolbar">
+        <h1 style="margin:0;flex:1;min-width:240px">สถิติการเล่นและความพึงพอใจ</h1>
+        <label class="muted" for="classFilter">ห้อง:</label>
+        <select id="classFilter"><option value="">ทุกห้อง</option></select>
+        <button class="btn small" id="refresh">🔄 รีเฟรช</button>
+      </div>
+      <p class="muted" id="updated" style="margin-top:-8px"></p>
+
+      <div class="grid four" id="kpis"></div>
+
+      <div class="grid two" style="margin-top:18px">
+        <div class="card">
+          <h3>คะแนนเฉลี่ยรายองค์ประกอบ (%)</h3>
+          <div class="chart-box"><canvas id="stageChart" aria-label="กราฟคะแนนเฉลี่ยรายด่าน"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>การกระจายของคะแนนรวม (จำนวนครั้งที่เล่น)</h3>
+          <div class="chart-box"><canvas id="distChart" aria-label="กราฟการกระจายคะแนน"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3>สรุปผลรายด่าน</h3>
+        <div class="table-wrap"><table class="data" id="stageTable"></table></div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3>สรุปผลรายห้องเรียน</h3>
+        <div class="table-wrap"><table class="data" id="classTable"></table></div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="toolbar" style="margin-bottom:8px">
+          <h3 style="margin:0;flex:1">ผลการประเมินความพึงพอใจ</h3>
+          <button class="btn ghost small" id="csvSurvey">⬇️ ดาวน์โหลด CSV</button>
+        </div>
+        <p class="muted">เกณฑ์การแปลความหมายค่าเฉลี่ย: 4.51–5.00 มากที่สุด · 3.51–4.50 มาก · 2.51–3.50 ปานกลาง · 1.51–2.50 น้อย · 1.00–1.50 น้อยที่สุด</p>
+        <div class="table-wrap"><table class="data" id="surveyTable"></table></div>
+        <div class="chart-box" style="height:360px;margin-top:18px"><canvas id="surveyChart" aria-label="กราฟค่าเฉลี่ยความพึงพอใจรายข้อ"></canvas></div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3>ข้อเสนอแนะจากผู้เล่น</h3>
+        <div id="comments"></div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <div class="toolbar" style="margin-bottom:8px">
+          <h3 style="margin:0;flex:1">ประวัติการเล่นล่าสุด</h3>
+          <button class="btn ghost small" id="csvSessions">⬇️ ดาวน์โหลด CSV</button>
+        </div>
+        <div class="table-wrap" style="max-height:520px"><table class="data" id="sessionTable"></table></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="assets/common.js"></script>
+  <script src="assets/data.js"></script>
+  <script src="assets/dashboard.js"></script>
+</body>
+</html>

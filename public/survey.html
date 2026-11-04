@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>แบบประเมินความพึงพอใจ · ผจญภัยกับพี่เสือ</title>
+  <link rel="icon" href="assets/tiger.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html"><img src="assets/tiger.svg" alt="">ผจญภัยกับพี่เสือ</a>
+    <span class="spacer"></span>
+    <a class="pill" href="index.html">🎮 เล่นเกม</a>
+  </header>
+
+  <main class="wrap">
+    <div id="formView">
+      <div class="card">
+        <h1>📝 แบบประเมินความพึงพอใจ</h1>
+        <div class="mascot">
+          <img src="assets/tiger.svg" alt="พี่เสือ" class="bounce" style="width:100px">
+          <div class="bubble">ตอบตามความรู้สึกจริงได้เลยนะ ความคิดเห็นของน้องช่วยให้พี่เสือเก่งขึ้น 💙</div>
+        </div>
+        <p class="muted">คำชี้แจง: โปรดเลือกระดับความพึงพอใจที่ตรงกับความคิดเห็นของท่านมากที่สุด
+          (5 = มากที่สุด, 4 = มาก, 3 = ปานกลาง, 2 = น้อย, 1 = น้อยที่สุด)</p>
+      </div>
+
+      <form id="surveyForm" class="card" novalidate>
+        <h3>ตอนที่ 1 ข้อมูลผู้ตอบ</h3>
+        <div class="form-row">
+          <label class="field"><span>ชื่อ–นามสกุล (ไม่บังคับ)</span><input type="text" id="name" maxlength="80"></label>
+          <label class="field"><span>ชั้น/ห้อง</span><input type="text" id="classRoom" maxlength="30" placeholder="เช่น ม.5/1"></label>
+        </div>
+
+        <h3 style="margin-top:8px">ตอนที่ 2 ความพึงพอใจต่อเกม</h3>
+        <div class="table-wrap">
+          <table class="likert">
+            <thead><tr><th style="text-align:left">รายการประเมิน</th><th>5<br>มากที่สุด</th><th>4<br>มาก</th><th>3<br>ปานกลาง</th><th>2<br>น้อย</th><th>1<br>น้อยที่สุด</th></tr></thead>
+            <tbody id="items"></tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:18px">ตอนที่ 3 ข้อเสนอแนะเพิ่มเติม</h3>
+        <label class="field"><span class="hidden">ข้อเสนอแนะ</span>
+          <textarea id="comment" rows="4" maxlength="1000" placeholder="ชอบอะไร อยากให้ปรับปรุงตรงไหน บอกพี่เสือได้เลย"></textarea>
+        </label>
+
+        <div id="err" class="alert hidden" role="alert"></div>
+        <div class="actions"><button class="btn orange" type="submit" id="submitBtn">ส่งแบบประเมิน ✉️</button></div>
+      </form>
+    </div>
+
+    <div id="doneView" class="card center hidden">
+      <img src="assets/tiger.svg" alt="พี่เสือ" class="bounce" style="width:160px;animation:bounce 1.8s ease-in-out infinite">
+      <h2>ขอบคุณมากนะ! 💙</h2>
+      <p id="doneMsg">พี่เสือได้รับแบบประเมินของน้องเรียบร้อยแล้ว</p>
+      <div class="actions"><a class="btn" href="index.html">กลับหน้าแรก</a></div>
+    </div>
+  </main>
+
+  <script src="assets/common.js"></script>
+  <script src="assets/data.js"></script>
+  <script>
+    (function () {
+      const D = window.CT_DATA;
+      const tbody = document.getElementById("items");
+      let n = 0;
+      D.survey.forEach((g) => {
+        tbody.insertAdjacentHTML("beforeend", `<tr class="group"><td colspan="6">${CT.esc(g.group)}</td></tr>`);
+        g.items.forEach((text) => {
+          n++;
+          const cells = [5, 4, 3, 2, 1].map((v) =>
+            `<td class="r" data-label="${v} ${D.scale[v - 1]}"><input type="radio" name="q${n}" value="${v}" aria-label="ข้อ ${n} ระดับ ${v} ${D.scale[v - 1]}"></td>`).join("");
+          tbody.insertAdjacentHTML("beforeend", `<tr data-q="${n}"><td class="q">${n}. ${CT.esc(text)}</td>${cells}</tr>`);
+        });
+      });
+      const TOTAL = n;
+
+      const p = CT.getPlayer();
+      if (p) {
+        document.getElementById("name").value = p.name || "";
+        document.getElementById("classRoom").value = p.classRoom || "";
+      }
+
+      document.getElementById("surveyForm").addEventListener("change", (e) => {
+        if (e.target.type === "radio") e.target.closest("tr").classList.remove("missing");
+      });
+
+      document.getElementById("surveyForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const err = document.getElementById("err");
+        err.classList.add("hidden");
+        const answers = [];
+        let firstMissing = null;
+        for (let i = 1; i <= TOTAL; i++) {
+          const v = document.querySelector(`input[name=q${i}]:checked`);
+          const row = document.querySelector(`tr[data-q="${i}"]`);
+          if (!v) { row.classList.add("missing"); firstMissing ||= row; }
+          answers.push(v ? Number(v.value) : null);
+        }
+        if (firstMissing) {
+          err.textContent = `ยังตอบไม่ครบ กรุณาตอบให้ครบทั้ง ${TOTAL} ข้อ (ข้อที่ยังไม่ได้ตอบแสดงเป็นสีแดง)`;
+          err.classList.remove("hidden");
+          firstMissing.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+        const btn = document.getElementById("submitBtn");
+        btn.disabled = true;
+        btn.textContent = "กำลังส่ง...";
+        const last = CT.lastSession();
+        try {
+          const res = await CT.send("/api/survey", {
+            session_id: last?.id || "",
+            player_name: document.getElementById("name").value.trim(),
+            class_room: document.getElementById("classRoom").value.trim(),
+            answers,
+            comment: document.getElementById("comment").value.trim(),
+          });
+          if (res.queued) document.getElementById("doneMsg").textContent =
+            "ตอนนี้ยังเชื่อมต่อฐานข้อมูลไม่ได้ ระบบเก็บคำตอบไว้ในเครื่องและจะส่งให้อัตโนมัติภายหลัง";
+          document.getElementById("formView").classList.add("hidden");
+          document.getElementById("doneView").classList.remove("hidden");
+          window.scrollTo(0, 0);
+        } catch (ex) {
+          err.textContent = "ส่งไม่สำเร็จ: " + ex.message;
+          err.classList.remove("hidden");
+          btn.disabled = false;
+          btn.textContent = "ส่งแบบประเมิน ✉️";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
