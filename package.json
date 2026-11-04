@@ -1,0 +1,13 @@
+{
+  "name": "tiger-computational-thinking-game",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "เกมฝึกแนวคิดเชิงคำนวณกับพี่เสือ — Netlify + Turso",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.18.0"
+  }
+}
